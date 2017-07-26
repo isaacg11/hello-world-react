@@ -1,23 +1,32 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-class Name extends React.Component {
-  render() {
-    return <span>{this.props.firstName} {this.props.lastName}</span>
-  }
-}
+class BankAccount extends React.Component {
+  state = {
+    accountBalance: 25.00
+  };
 
-class Connected extends React.Component {
+  increment() {
+    this.setState(
+      {
+        accountBalance: this.state.accountBalance + 1
+      },
+    );
+  };
+
   render() {
     return (
       <div>
-        <Name firstName={this.props.firstName} lastName={this.props.lastName} /> is {this.props.status}
+        <h3>Account Balance: ${this.state.accountBalance}</h3>
+        <button onClick={this.increment.bind(this)}>
+          Increase Amount
+        </button>
       </div>
     );
   }
 }
 
 ReactDOM.render(
-  <Connected firstName="Margaret" lastName="Hamilton" status="Connected" />,
+  <BankAccount />,
   document.getElementById('root')
 );
