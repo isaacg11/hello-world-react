@@ -1,32 +1,44 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { createStore } from "redux";
 
-class BankAccount extends React.Component {
-  state = {
-    accountBalance: 25.00
-  };
-
-  increment() {
-    this.setState(
-      {
-        accountBalance: this.state.accountBalance + 1
-      },
-    );
-  };
-
-  render() {
-    return (
-      <div>
-        <h3>Account Balance: ${this.state.accountBalance}</h3>
-        <button onClick={this.increment.bind(this)}>
-          Increase Amount
-        </button>
-      </div>
-    );
+const reducer = (state = 0, action) => {
+  // console.log(state);
+  // console.log(action);
+  switch (action.type) {
+    case 'INCREMENT':
+    return (state + 1);
+    case 'DECREMENT':
+    return (state - 1);
+    case 'RESTART':
+    return (state = 0);
+    default:
+    return state
   }
 }
 
-ReactDOM.render(
-  <BankAccount />,
-  document.getElementById('root')
+const Counter = ({ value, onIncrement, onDecrement, onReset }) => (
+  <div>
+  <h1>{value}</h1>
+  <button onClick={onIncrement}>+</button>
+  <button onClick={onReset}>Reset</button>
+  <button onClick={onDecrement}>-</button>
+  </div>
 );
+
+const store = createStore(reducer);
+
+const render = () => {
+  ReactDOM.render(
+    <Counter
+    value={ store.getState() }
+    onIncrement={ () => store.dispatch({ type: 'INCREMENT' }) }
+    onDecrement={ () => store.dispatch({ type: 'DECREMENT '}) }
+    onReset={ ()=> store.dispatch({ type: 'RESTART'}) }
+    />,
+    document.getElementById('root')
+  );
+};
+
+render();
+store.subscribe(render)
