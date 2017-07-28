@@ -1,42 +1,65 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { createStore } from "redux";
+import { connect } from "react-redux";
+import { Provider } from "react-redux";
 
-const reducer = (state = 0, action) => {
+const initialState = {
+  count: 0
+}
+
+const reducer = (state = initialState, action) => {
   switch (action.type) {
     case 'INCREMENT':
-      return state + 1;
+      return { ...state, count: state.count + 1 };
     case 'DECREMENT':
-      return state - 1;
-    case 'RESTART':
-      return state = 0;
+      return { ...state, count: state.count - 1 };
+    case 'RESET':
+      return { ...state, count: state.count = 0 };
     default:
       return state;
   }
+};
+
+const mapStateToProps = (state) => {
+  return {
+    count: state.count
+  }
 }
 
-const Counter = ({ value, onIncrement, onReset, onDecrement }) => (
+function onIncrement() {
+  return { type: 'INCREMENT' }
+}
+
+function onDecrement() {
+  return { type: 'DECREMENT' }
+}
+
+function onReset() {
+  return { type: 'RESET' }
+}
+
+const Counter = ({ count, onIncrement, onReset, onDecrement }) => (
   <div>
-    <h1>{value}</h1>
+    <h1>{count}</h1>
     <button onClick={onIncrement}>+</button>
     <button onClick={onReset}>Reset</button>
     <button onClick={onDecrement}>-</button>
   </div>
 );
 
+const ConnectedCounter = connect(mapStateToProps, { onIncrement, onDecrement, onReset })(Counter)
+
 const store = createStore(reducer);
 
 const render = () => {
   ReactDOM.render(
-    <Counter
-    value={ store.getState() }
-    onIncrement={ () => store.dispatch({ type: 'INCREMENT' }) }
-    onDecrement={ () => store.dispatch({ type: 'DECREMENT'}) }
-    onReset={ ()=> store.dispatch({ type: 'RESTART'}) }
-    />,
+    <Provider store={store}>
+    <ConnectedCounter/>
+    </Provider>,
     document.getElementById('root')
   );
 };
 
-render();
 store.subscribe(render)
+render();
